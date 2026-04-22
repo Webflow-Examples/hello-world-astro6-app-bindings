@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WebflowLogo from '../components/WebflowLogo.astro';
+import DocCard from '../components/DocCard.astro';
+import BindingsStatus from '../components/BindingsStatus.astro';
+import '../styles/global.css';
+
+const FRAMEWORK = 'Astro 6';
+
+const DOC_LINKS = [
+  {
+    title: 'Webflow Cloud overview',
+    description: 'What Webflow Cloud is and what you can build on it.',
+    href: 'https://developers.webflow.com/webflow-cloud',
+  },
+  {
+    title: 'Storing data',
+    description: 'Add SQLite, Key Value, and Object Storage bindings.',
+    href: 'https://developers.webflow.com/webflow-cloud/storing-data/overview',
+  },
+  {
+    title: `${FRAMEWORK} on Webflow Cloud`,
+    description: 'Build and deploy your first Webflow Cloud app.',
+    href: 'https://developers.webflow.com/webflow-cloud/getting-started',
+  },
+  {
+    title: 'Environments & deployments',
+    description: 'Manage previews, production, and deployment history.',
+    href: 'https://developers.webflow.com/webflow-cloud/environments',
+  },
+];
+---
+
+<Layout title={`Hello, world · Webflow Cloud (${FRAMEWORK} + Bindings)`}>
+  <div class="wf-page">
+    <div class="wf-glow" aria-hidden="true"></div>
+
+    <header class="wf-header">
+      <div class="wf-brand">
+        <WebflowLogo />
+        <span class="wf-brand-text">Webflow Cloud</span>
+      </div>
+      <nav class="wf-nav">
+        <a href="https://developers.webflow.com/webflow-cloud" target="_blank">Docs</a>
+        <a href="https://github.com/Webflow-Examples" target="_blank" class="wf-nav-ghost">GitHub</a>
+      </nav>
+    </header>
+
+    <main class="wf-main">
+      <section class="wf-hero">
+        <p class="wf-eyebrow">Hello, world · {FRAMEWORK} + Bindings</p>
+        <h1 class="wf-title">
+          Your <span class="wf-gradient">{FRAMEWORK}</span> app,<br />
+          wired to the edge.
+        </h1>
+        <p class="wf-subtitle">
+          D1 · R2 · KV provisioned automatically at deploy time. Inspect the live binding health below.
+        </p>
+        <div class="wf-cta">
+          <a class="wf-btn wf-btn-primary" href="https://developers.webflow.com/webflow-cloud/storing-data/overview" target="_blank">
+            Read the bindings guide
+          </a>
+          <a class="wf-btn wf-btn-ghost" href="https://github.com/Webflow-Examples/hello-world-astro6-app-bindings" target="_blank">
+            View on GitHub
+          </a>
+        </div>
+      </section>
+
+      <BindingsStatus />
+
+      <section class="wf-cards" aria-label="Documentation">
+        {DOC_LINKS.map((l) => <DocCard title={l.title} description={l.description} href={l.href} />)}
+      </section>
+    </main>
+
+    <footer class="wf-footer">
+      <span>
+        Built with {FRAMEWORK} · Deployed on
+        <a href="https://webflow.com/cloud" target="_blank">Webflow Cloud</a>
+      </span>
+    </footer>
+  </div>
+</Layout>

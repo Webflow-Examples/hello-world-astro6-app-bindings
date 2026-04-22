@@ -1,0 +1,32 @@
+{
+  "name": "hello-world-astro6-app-bindings",
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "overrides": {
+    "vite": "^7"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "dev:cf": "wrangler types && astro dev",
+    "build": "wrangler types && astro build",
+    "preview": "wrangler pages dev ./dist",
+    "astro": "astro",
+    "db:setup": "wrangler d1 migrations apply DB --local",
+    "cf:types": "wrangler types",
+    "postinstall": "wrangler types"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.1.10",
+    "astro": "^6.1.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260416.2",
+    "@tailwindcss/vite": "^4.1.4",
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.83.0"
+  }
+}
