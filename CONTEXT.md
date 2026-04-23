@@ -41,7 +41,7 @@ src/
   styles/global.css                ← Tailwind v4 + .wf-* design tokens
 drizzle/                            ← D1 migrations
 astro.config.mjs
-wrangler.json                       ← bindings declaration (no `main`: adapter generates it)
+wrangler.json                       ← bindings declaration
 package.json
 ```
 
@@ -61,11 +61,16 @@ Requires Node 22.12+ (set in `.nvmrc`).
 npm run build            # wrangler types && astro build
 ```
 
-Build output lands in `dist/`.
+Build output lands in `dist/`. The `@astrojs/cloudflare` adapter emits
+`dist/_worker.js/index.js` — this is the `main` entry referenced by
+`wrangler.json`.
 
-> **Note**: `wrangler.json` must not include a `main` field for Astro 6 —
-> `@astrojs/cloudflare` v13+ generates `dist/_worker.js/index.js` during build,
-> and `@cloudflare/vite-plugin` rejects a pre-build `main` that doesn't exist.
+> **Important**: keep `main: "dist/_worker.js/index.js"` in `wrangler.json` —
+> without it, Webflow Cloud serves static assets only and bindings are not
+> injected into `env`. `@cloudflare/vite-plugin` (pulled in by
+> `@astrojs/cloudflare`) may error on a cold local build because it validates
+> `main` before Astro emits the file; Webflow Cloud's deploy pipeline handles
+> this at deploy time.
 
 ## Bindings
 
