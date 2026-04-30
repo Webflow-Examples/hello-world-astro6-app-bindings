@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hello-world-astro6-app-bindings",
-  "main": "dist/_worker.js/index.js",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2025-04-15",
   "compatibility_flags": ["nodejs_compat"],
   "d1_databases": [
