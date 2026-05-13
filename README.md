@@ -7,6 +7,8 @@ At deploy time, Webflow Cloud provisions the configured services and injects the
 > Looking for the plain vanilla variant (no bindings)?
 > See [`hello-world-astro6-app`](https://github.com/Webflow-Examples/hello-world-astro6-app).
 
+[![Deploy to Webflow](https://webflow.com/img/deploy-dark.svg)](https://webflow.com/dashboard/cloud/deploy?repo=https://github.com/Webflow-Examples/hello-world-astro6-app-bindings)
+
 ## Requirements
 
 - Node **22.12+** (see `engines`).
