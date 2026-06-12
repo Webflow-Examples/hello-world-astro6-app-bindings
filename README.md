@@ -49,6 +49,34 @@ npm run preview
 | `SESSIONS` | KV   | `wrangler.json` |
 | `FLAGS`    | KV   | `wrangler.json` |
 
+## Sentry integration (this branch)
+
+This branch adds a working [Sentry](https://docs.sentry.io/platforms/javascript/guides/cloudflare/) setup for Webflow Cloud:
+
+| File                                | Purpose                                                       |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `src/middleware.ts`                 | Wraps every request with `Sentry.wrapRequestHandler` (`@sentry/cloudflare`) — traces + error capture |
+| `src/pages/api/sentry-ping.ts`      | Emits a server-side Sentry log on every request               |
+| `src/components/SentryPinger.astro` | Browser init (`@sentry/browser`); pings the API every 30s with a browser-side log per round trip; buttons to trigger test errors |
+
+### Setup
+
+1. Create a Sentry project and copy its DSN.
+2. Set **two** environment variables in your Webflow Cloud app:
+   - `PUBLIC_SENTRY_DSN` — inlined into the browser bundle at build time.
+   - `SENTRY_DSN` — read by the server at runtime.
+3. Deploy. Watch your Sentry project's **Logs** view: each 30s ping produces one `server:` and one `client:` log entry. Use the buttons to trigger test errors.
+
+> **Why middleware instead of wrapping the worker entry?** Sentry's Cloudflare
+> docs point `wrangler.json#main` at a wrapper file, but Webflow Cloud's deploy
+> system owns the worker entrypoint, so that wrapper would be discarded.
+> Middleware runs inside whatever entry the platform uses.
+>
+> `@sentry/cloudflare` sends events with `fetch`, so it works on any worker
+> `compatibility_date` — no extra transport configuration needed.
+
+For local testing: `echo "SENTRY_DSN=<dsn>" > .dev.vars` then `PUBLIC_SENTRY_DSN=<dsn> npm run build && npx wrangler dev`.
+
 ## Learn more
 
 - [Webflow Cloud docs](https://developers.webflow.com/webflow-cloud)

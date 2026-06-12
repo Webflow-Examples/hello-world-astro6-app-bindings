@@ -1,0 +1,85 @@
+<div class="wf-section-title">
+  <h2>Sentry demo</h2>
+  <p data-sentry-status>Checking…</p>
+</div>
+
+<div class="wf-cta">
+  <button class="wf-btn wf-btn-ghost" type="button" data-sentry-client-error>Trigger client error</button>
+  <button class="wf-btn wf-btn-ghost" type="button" data-sentry-server-error>Trigger server error</button>
+</div>
+
+<script>
+  import * as Sentry from '@sentry/browser';
+
+  const PING_INTERVAL_MS = 30_000;
+  const statusEl = document.querySelector('[data-sentry-status]');
+
+  /**
+   * Join the app's base mount path with an API path (same helper as
+   * BindingsStatus). `import.meta.env.BASE_URL` is populated by Astro/Vite
+   * from the `base` config (wired to COSMIC_MOUNT_PATH at build time).
+   */
+  function buildAppUrl(path: string): string {
+    const base = (import.meta.env.BASE_URL ?? '').replace(/\/+$/, '');
+    const cleanPath = path.replace(/^\/+/, '');
+    return `${base}/${cleanPath}`;
+  }
+
+  // Browser-side Sentry. The DSN is inlined at build time from
+  // PUBLIC_SENTRY_DSN — set it in your Webflow Cloud environment variables.
+  const dsn = import.meta.env.PUBLIC_SENTRY_DSN as string | undefined;
+
+  if (!dsn) {
+    if (statusEl) {
+      statusEl.textContent =
+        'Sentry is not configured — set PUBLIC_SENTRY_DSN (browser) and SENTRY_DSN (server) environment variables.';
+    }
+  } else {
+    Sentry.init({
+      dsn,
+      // Demo settings: capture everything. Lower these in a real app.
+      tracesSampleRate: 1.0,
+      // Send Sentry structured logs (Sentry.logger.*) from the browser.
+      enableLogs: true,
+    });
+
+    let pingCount = 0;
+
+    // Each round trip produces a server-side log (inside the API route) and
+    // the browser-side log below.
+    const ping = async () => {
+      const startedAt = Date.now();
+      try {
+        const res = await fetch(buildAppUrl('api/sentry-ping'));
+        const body = (await res.json()) as { requestedAt?: string };
+
+        Sentry.logger.info('client: sentry-ping completed', {
+          status: res.status,
+          durationMs: Date.now() - startedAt,
+          serverTime: body.requestedAt ?? 'unknown',
+        });
+
+        pingCount += 1;
+        if (statusEl) {
+          statusEl.textContent = `Pings /api/sentry-ping every ${PING_INTERVAL_MS / 1000}s · sent: ${pingCount} · last: ${new Date().toLocaleTimeString()}`;
+        }
+      } catch (e) {
+        Sentry.logger.error('client: sentry-ping failed', {
+          durationMs: Date.now() - startedAt,
+          message: e instanceof Error ? e.message : String(e),
+        });
+        if (statusEl) statusEl.textContent = 'Ping failed — see console / Sentry';
+      }
+    };
+
+    void ping();
+    setInterval(() => void ping(), PING_INTERVAL_MS);
+
+    document.querySelector('[data-sentry-client-error]')?.addEventListener('click', () => {
+      throw new Error('sentry-ping: intentional test error (browser)');
+    });
+    document.querySelector('[data-sentry-server-error]')?.addEventListener('click', () => {
+      void fetch(buildAppUrl('api/sentry-ping?error=1'));
+    });
+  }
+</script>

@@ -33,3 +33,4 @@ worker-configuration.d.ts
 # env files
 .env*
 !.env.example
+.dev.vars

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import WebflowLogo from '../components/WebflowLogo.astro';
 import DocCard from '../components/DocCard.astro';
 import BindingsStatus from '../components/BindingsStatus.astro';
+import SentryPinger from '../components/SentryPinger.astro';
 import '../styles/global.css';
 
 const FRAMEWORK = 'Astro 6';
@@ -67,6 +68,8 @@ const DOC_LINKS = [
       </section>
 
       <BindingsStatus />
+
+      <SentryPinger />
 
       <section class="wf-cards" aria-label="Documentation">
         {DOC_LINKS.map((l) => <DocCard title={l.title} description={l.description} href={l.href} />)}

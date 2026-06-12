@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.10",
+    "@sentry/browser": "^10.57.0",
+    "@sentry/cloudflare": "^10.57.0",
     "astro": "^6.1.4"
   },
   "devDependencies": {
