@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
 /**
  * POST /api/env-check
@@ -47,7 +48,7 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   let body: CheckRequest;
   try {
     body = (await request.json()) as CheckRequest;
@@ -62,11 +63,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return jsonResponse({ error: "`value` must be a string" }, 400);
   }
 
-  const runtime = locals.runtime as { env?: Record<string, unknown> } | undefined;
-  const env: Record<string, unknown> =
-    runtime?.env || (locals as unknown as Record<string, unknown>) || {};
-
-  const stored = env[body.name];
+  const stored = (env as unknown as Record<string, unknown>)[body.name];
   const exists = typeof stored === "string";
   const matches = exists && timingSafeEqual(stored as string, body.value);
 

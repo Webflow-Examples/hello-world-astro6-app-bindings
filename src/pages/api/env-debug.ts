@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
 /**
  * GET /api/env-debug
@@ -56,16 +57,15 @@ interface EnvVarInfo {
   frontendPrefix: boolean;
 }
 
-export const GET: APIRoute = async ({ locals }) => {
-  // In Webflow Cloud (Cloudflare Workers via @astrojs/cloudflare),
-  // env vars and secrets are exposed via `locals.runtime.env`. Bindings
-  // (D1/KV/R2) also live there — we filter to string values to keep this
-  // endpoint focused on env vars / secrets.
-  const runtime = locals.runtime as { env?: Record<string, unknown> } | undefined;
-  const env: Record<string, unknown> =
-    runtime?.env || (locals as unknown as Record<string, unknown>) || {};
-
-  const envVars: EnvVarInfo[] = Object.entries(env)
+export const GET: APIRoute = async () => {
+  // In Webflow Cloud (Cloudflare Workers via @astrojs/cloudflare), env vars
+  // and secrets are exposed via the `env` object from `cloudflare:workers`
+  // (Astro v6 removed `Astro.locals.runtime.env`). Bindings (D1/KV/R2) also
+  // live there — we filter to string values to keep this endpoint focused on
+  // env vars / secrets.
+  const envVars: EnvVarInfo[] = Object.entries(
+    env as unknown as Record<string, unknown>
+  )
     .filter(([, value]) => typeof value === "string")
     .map(([name]) => ({
       name,
