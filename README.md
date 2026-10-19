@@ -52,7 +52,7 @@ npm run preview
 | ---------- | ---- | --------------- |
 | `DB`       | D1   | `wrangler.json` |
 | `MEDIA`    | R2   | `wrangler.json` |
-| `SESSIONS` | KV   | `wrangler.json` |
+| `SESSION`  | KV   | `wrangler.json` |
 | `FLAGS`    | KV   | `wrangler.json` |
 
 ## Learn more
