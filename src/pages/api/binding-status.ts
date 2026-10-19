@@ -81,14 +81,14 @@ export const GET: APIRoute = async () => {
   const debug = {
     envKeys: Object.keys(env || {}),
     hasDB: !!env?.DB,
-    hasSessions: !!env?.SESSIONS,
+    hasSessions: !!env?.SESSION,
     hasFlags: !!env?.FLAGS,
     hasMedia: !!env?.MEDIA,
   };
 
   const [d1, kv_sessions, kv_flags, r2] = await Promise.all([
     checkD1(env?.DB || null),
-    checkKV(env?.SESSIONS || null, "SESSIONS"),
+    checkKV(env?.SESSION || null, "SESSION"),
     checkKV(env?.FLAGS || null, "FLAGS"),
     checkR2(env?.MEDIA || null),
   ]);
